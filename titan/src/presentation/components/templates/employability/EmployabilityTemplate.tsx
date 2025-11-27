@@ -42,7 +42,8 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export const EmployabilityMenu = () => {
-  const visible = useBetaAccess(BETA_ACCESS);
+  // const visible = useBetaAccess(BETA_ACCESS);
+  const visible = true;
   let menu_item_key = 0;
 
   //Router para navegacion
@@ -86,9 +87,11 @@ export const EmployabilityMenu = () => {
     }
     */
 
-    const resumeStatus = await validateUserResumeStatus();
+    // const resumeStatus = await validateUserResumeStatus();
+    const resumeStatus = true;
 
-    if (resumeStatus == false) {
+    // if (resumeStatus == false) {
+    if (!resumeStatus) {
       setErrorModalLockMessage(
         "Para acceder a las funcionalidades del modulo " +
           "de fortalecimiento profesional y obtener la mejor experiencia se " +
@@ -132,9 +135,11 @@ export const EmployabilityMenu = () => {
       user_type == MPAC_API_USER_TYPE_ENUM.ACTIVE_WORKER ||
       user_type == MPAC_API_USER_TYPE_ENUM.BENEFICIARY ||
       user_type == MPAC_API_USER_TYPE_ENUM.UNIVERSAL;
-    const resumeStatus = validateResume
-      ? await validateUserResumeStatus()
-      : true;
+    // const resumeStatus = validateResume
+    //   ? await validateUserResumeStatus()
+    //   : true;
+
+    const resumeStatus = false;
 
     if (!resumeStatus) {
       setErrorModalMessage(USER_RESUME_INCOMPLETE_STATUS);

@@ -27,6 +27,8 @@ import {
   MPAC_API_USER_TYPE_ENUM,
   HOME_ERROR_FOMENTO_NO_MEET,
   MPAC_API_USER_REQUIREMENT_STATUS_CODE_ENUM,
+  MPAC_API_USER_REQUIREMENT_STATUS_ENUM,
+  MPAC_API_RESULT_CODE_ENUM,
 } from "lib/config/constants";
 import { ActionMenuCard } from "presentation/components/molecules/common/cards/ActionMenuCard";
 import { useAppDispatch, useAppSelector } from "presentation/store"; // Ajusta el path según tu estructura
@@ -171,7 +173,22 @@ export const HomeTemplate = () => {
     let mpacData;
 
     //setLoadingUserValidation(true);
-    let mpac_resp = await queryMpacValidation(accessToken);
+    // let mpac_resp = await queryMpacValidation(accessToken);
+    let mpac_resp = {
+      mpacData: {
+        OUT_Fecha_Nacimiento_Cliente_Fmt1: "",
+        OUT_Fecha_Retiro_Empresa_Fmt2: "",
+        OUT_IdState: "001",
+        OUT_reason: "Ok",
+        OUT_Description: MPAC_API_USER_REQUIREMENT_STATUS_ENUM.OK,
+        OUT_Salario_Pila: "",
+        OUT_Salida: MPAC_API_RESULT_CODE_ENUM.NOT_FOUND,
+        OUT_Numero_Documento_Cliente: "1026259819",
+        OUT_Tipo_Documento_Cliente: "CC",
+        OUT_Tipo_Actor: MPAC_API_USER_TYPE_ENUM.UNIVERSAL,
+      } as UserMpacDataInterface,
+      mpac_status: MPAC_USER_STATUS_MESSAGE.COMPLETE,
+    };
     let sise_status = await querySiseValidation(accessToken);
     //setLoadingUserValidation(false);
 
@@ -543,7 +560,7 @@ export const HomeTemplate = () => {
       )}
 
       {/* Modal de error MPAC*/}
-      {mpacModalError && (
+      {/* {mpacModalError && (
         <Modal
           title="No pudimos validar tu perfil"
           description={mpacModalMessage}
@@ -556,7 +573,7 @@ export const HomeTemplate = () => {
           }}
           hideSecondaryButton
         />
-      )}
+      )} */}
 
       {/* Modal de error */}
       {siseModal && (
