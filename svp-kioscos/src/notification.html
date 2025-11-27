@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: transparent;
+            -webkit-app-region: drag;
+        }
+
+        .notification {
+            width: 380px;
+            background: linear-gradient(135deg, #005EAA 0%, #0077CC 100%);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 32px rgba(0, 94, 170, 0.3);
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+            animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.closing {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+
+        @keyframes slideOut {
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .content {
+            flex: 1;
+            color: white;
+            padding-top: 2px;
+        }
+
+        .title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .message {
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+
+        .close-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s;
+            -webkit-app-region: no-drag;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 100%;
+            animation: progress 8s linear;
+        }
+
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="notification" id="notification">
+        <div class="icon">
+            <img src="../assets/icons/comfandi-logo-dark-blue.svg" alt="Comfandi">
+        </div>
+        <div class="content">
+            <div class="title" id="title">Título de notificación</div>
+            <div class="message" id="message">Mensaje de la notificación</div>
+        </div>
+        <button class="close-btn" id="closeBtn">×</button>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const title = decodeURIComponent(urlParams.get('title') || 'Notificación');
+        const message = decodeURIComponent(urlParams.get('message') || '');
+
+        document.getElementById('title').textContent = title;
+        document.getElementById('message').textContent = message;
+
+        const notification = document.getElementById('notification');
+        const closeBtn = document.getElementById('closeBtn');
+        const progressFill = document.querySelector('.progress-fill');
+
+        // Cerrar al hacer clic en el botón X
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeNotification();
+        });
+
+        // Al hacer clic en la notificación, enfocar la ventana principal
+        notification.addEventListener('click', () => {
+            if (window.electronAPI) {
+                window.electronAPI.focusMainWindow();
+            }
+            closeNotification();
+        });
+
+        // Control de temporizador para pausar/reanudar
+        let closeTimeout;
+        let remaining = 8000;
+        let startTime;
+        let paused = false;
+        let progressStart = null;
+        let progressPausedAt = null;
+
+        function startCloseTimer() {
+            startTime = Date.now();
+            progressStart = Date.now();
+            progressFill.style.animationPlayState = 'running';
+            closeTimeout = setTimeout(() => {
+                closeNotification();
+            }, remaining);
+        }
+
+        function pauseCloseTimer() {
+            if (!paused) {
+                clearTimeout(closeTimeout);
+                remaining -= Date.now() - startTime;
+                paused = true;
+                // Pausar animación de barra
+                progressPausedAt = Date.now();
+                const elapsed = progressPausedAt - progressStart;
+                const percent = Math.max(0, 1 - (elapsed / 8000));
+                progressFill.style.animationPlayState = 'paused';
+                progressFill.style.width = (percent * 100) + '%';
+            }
+        }
+
+        function resumeCloseTimer() {
+            if (paused) {
+                paused = false;
+                startTime = Date.now();
+                progressStart = Date.now() - (8000 - remaining);
+                // Ajustar animación de barra
+                progressFill.style.animation = 'none';
+                void progressFill.offsetWidth; // trigger reflow
+                progressFill.style.width = (remaining / 8000 * 100) + '%';
+                progressFill.style.animation = `progress ${remaining}ms linear`;
+                progressFill.style.animationPlayState = 'running';
+                closeTimeout = setTimeout(() => {
+                    closeNotification();
+                }, remaining);
+            }
+        }
+
+        notification.addEventListener('mouseenter', pauseCloseTimer);
+        notification.addEventListener('mouseleave', resumeCloseTimer);
+
+        // Inicializar barra de progreso
+        progressFill.style.animation = 'progress 8000ms linear';
+        progressFill.style.animationPlayState = 'running';
+        startCloseTimer();
+
+        function closeNotification() {
+            notification.classList.add('closing');
+            setTimeout(() => {
+                if (window.electronAPI) {
+                    window.electronAPI.closeNotification();
+                }
+            }, 300);
+        }
+
+    </script>
+</body>
+
+</html>

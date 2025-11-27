@@ -1,0 +1,254 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .crisp-edges {
+    image-rendering: crisp-edges;
+  }
+}
+
+@font-face {
+  font-family: "Outfit";
+  src: url("/fonts/Outfit-VariableFont_wght.woff2") format("woff2");
+  font-weight: 100 900; /* Rango de pesos si es variable */
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #f6f6f6;
+  font-family: "Outfit"; /* Aplica la fuente al cuerpo del sitio */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  /* Para Chrome y Safari */
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  /* Para Firefox */
+}
+
+.menuCardShadow {
+  box-shadow: 0px 4px 8px 0px #003c6a0a;
+}
+
+.descriptionMenuCardShadow {
+  box-shadow: 7px 11px 10px 0px #003c6a1f;
+}
+
+.menuCourseCardShadow{
+  box-shadow: 7px 11px 10px 0px #003c6a1f;
+}
+
+.activeButtonShadow {
+  box-shadow: 0px 4px 4px 0px #00000040;
+}
+
+.inactiveButtonShadow {
+  box-shadow: 0px 4px 4px 0px #00000018;
+}
+
+.boxShadow {
+  box-shadow: 0px 9px 10px 0px rgba(0, 60, 106, 0.04);
+}
+
+.menu {
+  background: #f6f6f6;
+  width: 250px;
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+.no-pointer-events {
+  pointer-events: none;
+}
+
+.custom-date-picker,
+.custom-date-picker > div.react-datepicker-wrapper,
+.custom-date-picker
+  > div
+  > div.react-datepicker__input-container
+  .custom-date-picker
+  > div
+  > div.react-datepicker__input-container
+  input {
+  width: 100% !important;
+  display: block;
+}
+.custom-datepicker .react-datepicker-popper {
+  z-index: 50 !important;
+}
+
+@layer components {
+  .iframeStyle {
+    height: -webkit-fill-available;
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ajusta la altura según tus necesidades */
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+.header-image {
+  position: relative;
+  height: 123px;
+  /*border: 2px solid red;*/
+}
+.header-sub {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 96px;
+  margin-top: 27px;
+  /*border: 2px solid black;*/
+}
+.header-sub-image {    
+  position: absolute;
+  top: -29px;
+  left: 0;
+  height: 96px;
+  margin-top: 27px;
+  /*border: 2px solid green;*/
+  z-index: 10;
+}
+
+.header-sub-text {    
+  position: absolute;  
+  /*left: 210px;  
+  margin-top: 35px;*/
+  z-index: 5;
+}
+
+.footer-image {
+  position: relative;  
+}
+.footer-sub {
+  position: absolute;
+  top: 0;
+  left: 0;    
+}
+.footer-sub-image {    
+  position: absolute;
+  top: -29px;
+  left: 0;
+  height: 96px;
+  margin-top: 27px;
+  /*border: 2px solid green;*/
+  z-index: 10;
+}
+
+.footer-sub-text {    
+  position: absolute;  
+  /*left: 250px;*/
+  z-index: 5;
+}
+
+/** Alert animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.3s ease-out;
+}
+
+.full-width-date-picker {
+  width: inherit !important;
+}
+ 
+.full-width-date-picker-input {
+  width: 100% !important;
+}
+
+.sidebar-help {
+  position: absolute;
+  display: block;
+  /*overflow: hidden;*/
+  top: 60px;
+  right: -50vw;
+  height: 400px;
+  width: 50vw;
+  /*transition: left 0.3s ease-in-out;*/
+}
+.sidebar-help-toggle {
+  position: absolute;
+  top: 5%;
+  left: -60px;
+  height: 60px;
+  width: 60px;
+  z-index: 1;
+}
+.content {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  height: 100%;
+  transition: left 0.3s ease-in-out;  
+}
+.sidebar-help.open {
+  right: 0;
+}
+.content.open {
+  right: 50vw;
+}
+
+
+/* datepicker.css */
+.custom-datepicker-gray input::placeholder {
+  color: #cccccc;
+}

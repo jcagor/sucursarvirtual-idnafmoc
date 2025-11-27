@@ -1,0 +1,28 @@
+volumes:  
+  postgres_data:
+  
+services:
+  app:
+      container_name: app-mpac-service-app
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - '4000:4000'
+      depends_on:
+        - db
+      env_file:
+        - .env.docker
+
+  db:
+    image: postgres:17
+    container_name: app-mpac-service-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: gamma
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data

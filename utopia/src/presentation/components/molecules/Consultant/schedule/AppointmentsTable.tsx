@@ -1,0 +1,138 @@
+"use client";
+
+import { AppointmentType } from "domain/models";
+import { useRouter } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+
+const ITEMS_PER_PAGE = 5;
+
+type AppointmentsTableProps = {
+  appointments: AppointmentType[];
+};
+
+export const AppointmentsTable: React.ForwardRefRenderFunction<
+  HTMLInputElement,
+  AppointmentsTableProps
+> = ({ appointments }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const paginatedAppointments = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return appointments.slice(start, start + ITEMS_PER_PAGE);
+  }, [appointments, currentPage]);
+
+  const totalPages = useMemo(
+    () => Math.ceil(appointments.length / ITEMS_PER_PAGE),
+    [appointments]
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [appointments]);
+
+  return (
+    <div className="flex flex-col w-full py-4 gap-3 text-sm">
+      <div className="grid grid-cols-5 py-2 bg-principal-50 text-center rounded-lg font-bold">
+        <div>Cédula</div>
+        <div>Nombre y apellido</div>
+        <div>Fecha de la sesión</div>
+        <div>Asistencia</div>
+      </div>
+      {paginatedAppointments.map((appointment) => (
+        <AppointmentsRow key={appointment.id} appointment={appointment} />
+      ))}
+      <div className="flex justify-end gap-4 mt-4">
+        <button
+          className="px-3 py-1 rounded-lg disabled:text-principal-450"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          &lt;
+        </button>
+        <div className="flex gap-2">
+          {Array.from({ length: totalPages }, (_, index) => {
+            const page = index + 1;
+            return (
+              <button
+                key={page}
+                className={`px-2 py-1 rounded-lg ${
+                  page === currentPage ? "font-bold" : "text-principal-450"
+                }`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          className="px-3 py-1 rounded-lg disabled:text-principal-450"
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          &gt;
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const AppointmentsRow = ({ appointment }: { appointment: AppointmentType }) => {
+  const router = useRouter();
+
+  const handleViewDetails = (id: string) => {
+    router.push(`/tech-assistence-record/?aId=${id}`);
+  };
+
+  return (
+    <div className="grid grid-cols-5 py-2 bg-principal-150 rounded-lg text-center border border-principal-50">
+      <div>{appointment.document_number}</div>
+      <div>{appointment.name}</div>
+      <div>
+        {new Intl.DateTimeFormat("es-ES", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          timeZone: "UTC",
+        }).format(new Date(appointment.date))}
+      </div>
+      <div className="flex items-center gap-2 justify-center">
+        <div
+          className={`w-2 h-2 rounded-full ${
+            appointment.attendance === "Assigned"
+              ? "bg-principal-120"
+              : appointment.attendance === "Absent"
+              ? "bg-principal-500"
+              : appointment.attendance === "Attended"
+              ? "bg-principal-700"
+              : ""
+          }`}
+        ></div>
+        <span
+          className={`${
+            appointment.attendance === "Assigned"
+              ? "text-principal-120"
+              : appointment.attendance === "Absent"
+              ? "text-principal-500"
+              : appointment.attendance === "Attended"
+              ? "text-principal-700"
+              : ""
+          }`}
+        >
+          {appointment.attendance}
+        </span>
+      </div>
+      <div>
+        <button
+          className="px-3 py-1 bg-principal-700 text-principal-150 rounded-lg disabled:bg-principal-450 disabled:text-principal-300"
+          onClick={() => handleViewDetails(appointment.id)}
+          disabled={appointment.attendance === "Attended"}
+        >
+          Asignar acta
+        </button>
+      </div>
+    </div>
+  );
+};

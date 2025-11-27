@@ -1,0 +1,67 @@
+export const USECASES_TYPES = {
+  _LogoutKeycloakUseCase: Symbol("LogoutKeycloakUseCase"),
+  _GetOptionsUseCase: Symbol("GetOptionsUseCase"),
+  _CreateSchedule: Symbol("CreateScheduleUseCase"),
+  _FindAllSchedules: Symbol("FindAllSchedulesUseCase"),
+  _FindSchedule: Symbol("FindScheduleUseCase"),
+  _UpdateSchedule: Symbol("UpdateScheduleUseCase"),
+  _GetAppointmentsByBusiness: Symbol("GetAppointmentsByBusiness"),
+  _CreateAppointmentUseCase: Symbol("CreateAppointmentUseCase"),
+  _FindAllSessionByScheduleUseCase: Symbol("FindAllSessionByScheduleUseCase"),
+  _CreateSessionUseCase: Symbol("CreateSessionUseCase"),
+  _FindScheduleBySessionUseCase: Symbol("FindScheduleBySessionUseCase"),
+  _FindSessionUseCase: Symbol("FindSessionUseCase"),
+  _UpdateSessionUseCase: Symbol("UpdateSessionUseCase"),
+  _CreateMonthlyReportUseCase: Symbol("CreateMonthlyReportUseCase"),
+  _ListAdminMonthlyReportUseCase: Symbol("ListAdminMonthlyReportUseCase"),
+  _GetBusinessHoursReportUseCase: Symbol("GetBusinessHoursReportUseCase"),
+  _GetConsultantBusinessReportUseCase: Symbol(
+    "GetConsultantBusinessReportUseCase"
+  ),
+  _GetSummaryReportFileUseCase: Symbol("GetSummaryReportFileUseCase"),
+  _GetUserInformationUseCase: Symbol("GetUserInformationUseCase"),
+  _GetAppointmentAdminUseCase: Symbol("GetAppointmentAdminUseCase"),
+  _SaveAssistanceRecordFormUseCase: Symbol("SaveAssistanceRecordFormUseCase"),
+  _SaveAssistanceRecordCorrectionFormUseCase: Symbol(
+    "SaveAssistanceRecordCorrectionFormUseCase"
+  ),
+  _ListAnalystTechReportsUseCase: Symbol("ListAnalystTechReportsUseCase"),
+  _GetAnalystTechReportUseCase: Symbol("GetAnalystTechReportUseCase"),
+  _CreateAnalystTechRevisionUseCase: Symbol("CreateAnalystTechRevisionUseCase"),
+  _findAllCourses: Symbol("findAllCourses"),
+  _BulkCourseLoading: Symbol("BulkCourseLoading"),
+  _CreateWorkPlanUseCase: Symbol("CreateWorkPlanUseCase"),
+  _GetWorkPlanReportUseCase: Symbol("GetWorkPlanReportUseCase"),
+  _GetMilestonesReportUseCase: Symbol("GetMilestonesReportUseCase"),
+  _ListRejectedTechAssistanceRecordsUseCase: Symbol(
+    "ListRejectedTechAssistanceRecordsUseCase"
+  ),
+  _BulkScheduleLoading: Symbol("BulkScheduleLoading"),
+  _BulkSesionLoading: Symbol("BulkSesionLoading"),
+  _CreateGrowthPlanUseCase: Symbol("CreateGrowthPlanUseCase"),
+  _GetGrowthPlanUseCase: Symbol("GetGrowthPlanUseCase"),
+  _UpdateGrowthPlanUseCase: Symbol("UpdateGrowthPlanUseCase"),
+  _findAllPrograms: Symbol("findAllPrograms"),
+  _FindAllProgramSchedulesByProgram: Symbol("FindAllProgramSchedulesByProgram"),
+  _CreateProgramSchedule: Symbol("CreateProgramSchedule"),
+  _FindProgramSchedule: Symbol("FindProgramSchedule"),
+  _UpdateProgramSchedule: Symbol("UpdateProgramSchedule"),
+  _CreateProgramSession: Symbol("CreateProgramSession"),
+  _FindAllProgramSessionsBySchedule: Symbol("FindAllProgramSessionsBySchedule"),
+  _UpdateProgramSession: Symbol("UpdateProgramSession"),
+  _FindProgramSession: Symbol("FindProgramSession"),
+  _FindUnvalidatedBusiness: Symbol("FindUnvalidatedBusiness"),
+  _FindBusinessAuthorizedBySchedule: Symbol("FindBusinessAuthorizedBySchedule"),
+  _AssignBusinessToSchedule: Symbol("AssignBusinessToSchedule"),
+  _FindBusinessToAssignConsultant: Symbol("FindBusinessToAssignConsultant"),
+  _FindConsultantsAssignedToBusiness: Symbol(
+    "FindConsultantsAssignedToBusiness"
+  ),
+  _FindAdministratorsAssignedToBusinessUseCase: Symbol(
+    "FindAdministratorsAssignedToBusinessUseCase"
+  ),
+  _AssignConsultantToBusiness: Symbol("AssignConsultantToBusiness"),
+  _RescheduleAppointment: Symbol("RescheduleAppointment"),
+  _IsUserRegistered: Symbol("IsUserRegistered"),
+  _GetRejectedBusinessExcelReportUseCase:Symbol("GetRejectedBusinessExcelReportUseCase"),
+};
