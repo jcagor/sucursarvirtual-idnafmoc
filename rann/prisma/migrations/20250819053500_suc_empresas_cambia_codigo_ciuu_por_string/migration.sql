@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "CodeCIIU" ALTER COLUMN "code" SET DATA TYPE TEXT;

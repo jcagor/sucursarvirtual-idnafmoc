@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sucursal Virtual Comfandi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <!-- Logo Comfandi -->
+  <img src="../assets/icons/comfandi-logo-dark-blue.svg" alt="Comfandi" class="logo" draggable="false" />
+
+  <div class="container">
+    <!-- Ilustración -->
+    <img src="../assets/images/woman-sitting-sad.png" alt="Error de conexión" class="illustration" draggable="false" />
+
+    <!-- Título -->
+    <h1 class="error-title">
+      Lo sentimos,<br>sin conexión a internet
+    </h1>
+
+    <!-- Descripción -->
+    <p class="error-description">
+      No se pudo establecer la conexión con el servidor. Por favor verifica tu conexión a internet e intenta nuevamente.
+    </p>
+
+    <!-- Botón -->
+    <button id="reintentar" class="btn-primary">
+      Reintentar conexión
+    </button>
+
+    <!-- Estado -->
+    <div id="estado" class="status-message"></div>
+  </div>
+
+  <!-- Porcentaje de batería -->
+  <div id="battery-indicator"
+    style="position:fixed;bottom:1.5rem;right:2rem;z-index:200;background:rgba(255,255,255,0.95);color:#005EAA;font-family:'Outfit',sans-serif;font-size:1rem;padding:0.5rem 1.2rem;border-radius:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:flex;align-items:center;gap:0.5rem;min-width:70px;">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;vertical-align:middle;">
+      <rect x="2" y="6" width="14" height="8" rx="2" fill="#E7E7E7" />
+      <rect id="battery-bar" x="2" y="6" width="14" height="8" rx="2" fill="#97D700" />
+      <rect x="16" y="8" width="2" height="4" rx="1" fill="#C7D2E6" />
+    </svg>
+    <span id="battery-text">--%</span>
+  </div>
+  </div>
+
+  <script>
+    const boton = document.getElementById("reintentar");
+    const estado = document.getElementById("estado");
+    const batteryText = document.getElementById("battery-text");
+    const batteryBar = document.getElementById("battery-bar");
+
+    async function verificarConexion() {
+      boton.disabled = true;
+      estado.className = "status-message loading";
+      estado.textContent = "Verificando conexión...";
+
+      try {
+        const online = await window.desktop?.checkOnline?.();
+
+        if (online) {
+          estado.className = "status-message success";
+          estado.textContent = "✓ Conexión restablecida. Abriendo aplicación...";
+
+          // Notificación nativa
+          window.desktop?.showNotification?.(
+            "Conexión restablecida",
+            "La aplicación ha recuperado la conexión a internet."
+          );
+
+          setTimeout(async () => {
+            await window.desktop?.openOnline?.();
+          }, 500);
+        } else {
+          estado.className = "status-message error";
+          estado.textContent = "✗ Sin conexión. Por favor intenta nuevamente.";
+          boton.disabled = false;
+        }
+      } catch (e) {
+        estado.className = "status-message error";
+        estado.textContent = "✗ Error al verificar la conexión.";
+        boton.disabled = false;
+        console.error('Error:', e);
+      }
+    }
+
+    boton.onclick = verificarConexion;
+
+    // Intento automático cada 30 segundos
+    let autoRetryInterval = setInterval(() => {
+      if (!boton.disabled) {
+        console.log('Reintentando automáticamente...');
+        verificarConexion();
+      }
+    }, 30000);
+
+    // Mostrar porcentaje de batería usando Battery API del navegador
+    async function actualizarBateria() {
+      try {
+        if ('getBattery' in navigator) {
+          const battery = await navigator.getBattery();
+          const nivel = Math.round(battery.level * 100);
+          batteryText.textContent = nivel + '%';
+
+          // Calcular ancho proporcional (max 14)
+          const width = Math.max(2, Math.round(14 * battery.level));
+          batteryBar.setAttribute('width', width);
+
+          // Color según nivel
+          batteryBar.setAttribute('fill', nivel < 20 ? '#FD536D' : (nivel < 50 ? '#FFB800' : '#97D700'));
+
+          // Actualizar cuando cambie el nivel
+          battery.addEventListener('levelchange', () => {
+            const newLevel = Math.round(battery.level * 100);
+            batteryText.textContent = newLevel + '%';
+            const newWidth = Math.max(2, Math.round(14 * battery.level));
+            batteryBar.setAttribute('width', newWidth);
+            batteryBar.setAttribute('fill', newLevel < 20 ? '#FD536D' : (newLevel < 50 ? '#FFB800' : '#97D700'));
+          });
+        } else {
+          // Si no hay soporte para Battery API, ocultar indicador
+          document.getElementById('battery-indicator').style.display = 'none';
+        }
+      } catch (e) {
+        console.error('Error al obtener batería:', e);
+        document.getElementById('battery-indicator').style.display = 'none';
+      }
+    }
+    actualizarBateria();
+  </script>
+</body>
+
+</html>

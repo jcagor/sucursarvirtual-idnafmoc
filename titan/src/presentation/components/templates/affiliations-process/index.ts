@@ -1,0 +1,11 @@
+export { default as Resumen } from "./pensioner/init-step/Resumen";
+export { default as ValidateData } from "./pensioner/init-step/ValidateData";
+export { default as TypeAffiliations } from "./pensioner/init-step/TypeAffiliations";
+export { default as ListEntity } from "./pensioner/pensioner-aportant/ListEntity";
+export { default as FormInfomationData } from "./pensioner/common/FormInfomationData";
+export { default as LoadComplementFiles } from "./pensioner/pensioner-aportant/LoadComplementFiles";
+export { default as FilingCode } from "./pensioner/pensioner-aportant/FilingCode";
+export { default as SelectTypePensioner } from "./SelectTypeAffiliation";
+export { default as LoadComplementFilesPensioner25 } from "./pensioner/pensioner-25/LoadComplementFiles";
+export { default as LoadComplementFilesPensioner1643 } from "./pensioner/pensioner-1643/LoadComplementFiles";
+export { default as FilingCodeCommon } from "./pensioner/common/FilingCode";

@@ -1,0 +1,985 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = []
+  binaryTargets   = ["native", "linux-musl", "linux-musl-openssl-3.0.x", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_GAMMA_URL")
+}
+
+model Document_Type {
+  id                  String               @id @default(uuid()) @db.Uuid
+  name                String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  businessProfiles    BusinessProfile[]
+  businessValidations BusinessValidation[]
+  selfManagement      SelfManagement[]
+  coursePostulation   CoursePostulation[]
+}
+
+model BusinessProfile {
+  id                  String                                  @id @default(uuid()) @db.Uuid
+  document_type_id    String                                  @db.Uuid
+  document_number     String                      
+  data                Json                      
+  createdAt           DateTime                                @default(now())
+  updatedAt           DateTime                                @updatedAt
+  appointments        Appointments[]                      
+  workPlan            WorkPlan[]                      
+  growthPlan          GrowthPlan[]                      
+  courseSchedule      courseSchedule[]                        @relation("CourseScheduleEligibleBusiness")
+  document_type       Document_Type                           @relation(fields: [document_type_id], references: [id])
+  userProfile         UserProfile[]                           @relation("UserProfileBusiness")
+  Programs            programSchedule[]                       @relation("BusinessProgramInscription")
+  adminAssignHistory  BusinessAdminUserAssignationHistory[]
+}
+
+model BusinessValidation {
+  id               String                   @id @default(uuid()) @db.Uuid
+  document_type_id String                   @db.Uuid
+  document_type    Document_Type            @relation(fields: [document_type_id], references: [id])
+  document_number  String
+  reason           String[]
+  status           BusinessValidationStatus
+  validatedAt      DateTime?                @db.Date
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+}
+
+enum BusinessValidationStatus {
+  APPROVED
+  REJECTED
+}
+
+model Department {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model City {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sector {
+  id        String      @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  subsector Subsector[]
+  CodeCIIU  CodeCIIU[]
+}
+
+model Subsector {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  sector_id String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sector    Sector   @relation(fields: [sector_id], references: [id])
+}
+
+model SelfManagement {
+  id               String        @id @default(uuid()) @db.Uuid
+  document_type_id String        @db.Uuid
+  document_number  String
+  answers          Json
+  analysis         Json
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  document_type    Document_Type @relation(fields: [document_type_id], references: [id])
+}
+
+model Appointments {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  businessProfile_id   String                 @db.Uuid
+  date                 DateTime
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  attendance           Attendance
+  businessProfile      BusinessProfile        @relation(fields: [businessProfile_id], references: [id])
+  TechAssistanceRecord TechAssistanceRecord[]
+  type                 AppointmentType        @default(CONSULT)
+  appointmentHistory   AppointmentHistory[]
+}
+
+model AppointmentHistory {
+  id            String       @id @default(uuid()) @db.Uuid
+  appointmentId String       @db.Uuid
+  oldDate       DateTime
+  newDate       DateTime
+  changedAt     DateTime     @default(now())
+  appointment   Appointments @relation(fields: [appointmentId], references: [id])
+}
+
+model course {
+  id              String           @id @default(uuid()) @db.Uuid
+  name            String
+  description     String
+  iconUrl         String
+  courseSchedules courseSchedule[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+enum CourseState {
+  Created
+  Cancelled
+  Active
+}
+
+enum CourseAccess {
+  OPEN
+  CLOSED
+}
+
+model courseSchedule {
+  id                                String                              @id @default(uuid()) @db.Uuid
+  course                            course                              @relation(fields: [course_id], references: [id])
+  course_id                         String                              @db.Uuid
+  name                              String            
+  startDate                         DateTime            
+  endDate                           DateTime            
+  modality                          String            
+  typeUser                          String            
+  sessions                          Int           
+  supplier                          String            
+  id_regional                       String            
+  cost                              Int           
+  state                             CourseState                         @default(Created)
+  accessType                        CourseAccess                        @default(OPEN)
+  description                       String            
+  courseCurriculumMesh              CourseCurriculumMesh[]            
+  coursePostulation                 CoursePostulation[]           
+  courseRegistration                CourseRegistration[]            
+  courseSession                     CourseSession[]           
+  trainingCourses                   TrainingCourseSchedule[]            
+  psyTestGroup                      PsyTestGroup[]            
+  courseInscriptionAttemptHistory   CourseInscriptionAttemptHistory[]
+  creaCourseRegisterHistory         CreaCourseRegisterHistory[]
+  businessProfile                   BusinessProfile[]                   @relation("CourseScheduleEligibleBusiness")
+  createdAt                         DateTime                            @default(now())
+  updatedAt                         DateTime                            @updatedAt
+}
+
+model CourseCurriculumMesh {
+  id                String         @id @default(uuid()) @db.Uuid
+  courseSchedule    courseSchedule @relation(fields: [courseSchedule_id], references: [id])
+  courseSchedule_id String         @db.Uuid
+  name              String
+  date              DateTime
+  schedule          String
+  sessionType       String
+  session           String
+}
+
+model CourseSession {
+  id                String         @id @default(uuid()) @db.Uuid
+  courseSchedule    courseSchedule @relation(fields: [courseSchedule_id], references: [id])
+  courseSchedule_id String         @db.Uuid
+  name              String
+  typeSession       String
+  startTime         String
+  endTime           String
+  date              DateTime
+}
+
+model CoursePostulation {
+  id                 String               @id @default(uuid()) @db.Uuid
+  courseSchedule     courseSchedule       @relation(fields: [courseSchedule_id], references: [id])
+  courseSchedule_id  String               @db.Uuid
+  document_number    String
+  document_type_id   String               @db.Uuid
+  document_type      Document_Type        @relation(fields: [document_type_id], references: [id])
+  courseRegistration CourseRegistration[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+}
+
+model CourseRegistration {
+  id                   String             @id @default(uuid()) @db.Uuid
+  courseSchedule       courseSchedule     @relation(fields: [courseSchedule_id], references: [id])
+  courseSchedule_id    String             @db.Uuid
+  coursePostulation_id String?            @db.Uuid
+  coursePostulation    CoursePostulation? @relation(fields: [coursePostulation_id], references: [id])
+  document_type        String
+  document_number      String
+  firstName            String
+  middleName           String
+  firstLastName        String
+  middleLastName       String
+  phoneNumber          String
+  email                String
+  gender               String
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+}
+
+model MonthlyReport {
+  id               String   @id @default(uuid()) @db.Uuid
+  document_type_id String   @db.Uuid
+  document_number  String
+  data             Json     @db.JsonB
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Program {
+  id                     String            @id @default(uuid()) @db.Uuid
+  name                   String
+  minimum_number_workers Int               @default(0)
+  months_of_constitution Int               @default(0)
+  iconUrl                String?
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  programSchedules       programSchedule[]
+}
+
+model programSchedule {
+  id              String            @id @default(uuid()) @db.Uuid
+  program         Program           @relation(fields: [program_id], references: [id])
+  program_id      String            @db.Uuid
+  name            String
+  startDate       DateTime
+  endDate         DateTime
+  value           String
+  description     String
+  programSessions programSession[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  BusinessList    BusinessProfile[] @relation("BusinessProgramInscription")
+}
+
+model programSession {
+  id                 String          @id @default(uuid()) @db.Uuid
+  programSchedule    programSchedule @relation(fields: [programSchedule_id], references: [id])
+  programSchedule_id String          @db.Uuid
+  name               String
+  typeSession        String
+  endDate            DateTime
+  value              String
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+model CodeCIIU {
+  id                      String   @id @default(uuid()) @db.Uuid
+  code                    String
+  sector                  Sector?  @relation(fields: [sector_id], references: [id])
+  sector_id               String?  @db.Uuid
+  economic_activity       String?
+  valid_economic_activity Boolean?
+}
+
+model WorkPlan {
+  id                 String          @id @default(uuid()) @db.Uuid
+  businessProfile_id String          @db.Uuid
+  businessProfile    BusinessProfile @relation(fields: [businessProfile_id], references: [id])
+  workPlan           Json            @db.JsonB
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+model GrowthPlan {
+  id                 String             @id @default(uuid()) @db.Uuid
+  businessProfile_id String             @db.Uuid
+  businessProfile    BusinessProfile    @relation(fields: [businessProfile_id], references: [id])
+  growthPlan         Json               @db.JsonB
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  growthPlanReport   GrowthPlanReport[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model CertificationEntity {
+  id             String           @id @default(dbgenerated("gen_random_uuid()"))
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime         @db.Timestamptz(6)
+  name           String
+  state          String
+  TrainingCourse TrainingCourse[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model CurriculumInformation {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime @db.Timestamptz(6)
+  information           Json     @db.Json
+  complete              Boolean?
+  download_link         String?
+  identification_number String
+  identification_type   String
+  state                 Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model FormationLine {
+  id             String           @id @default(dbgenerated("gen_random_uuid()"))
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime         @db.Timestamptz(6)
+  name           String
+  state          Boolean
+  TrainingCourse TrainingCourse[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model OfferFrequency {
+  id             String           @id @default(dbgenerated("gen_random_uuid()"))
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime         @db.Timestamptz(6)
+  name           String
+  state          Boolean
+  TrainingCourse TrainingCourse[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Region {
+  id             String           @id @default(dbgenerated("gen_random_uuid()"))
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime         @db.Timestamptz(6)
+  name           String
+  state          Boolean
+  TrainingCourse TrainingCourse[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SiseNotRegistered {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime @db.Timestamptz(6)
+  edcmfndi              String?
+  email                 String?
+  email_verified        Boolean?
+  family_name           String?
+  given_name            String?
+  identification_number String
+  identification_type   String
+  name                  String?
+  state                 Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model TrainingCourse {
+  id                   String                   @id(map: "TrainingCourses_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at           DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime                 @db.Timestamptz(6)
+  start_date           DateTime                 @db.Timestamptz(6)
+  name                 String?
+  duration_hours       Int?
+  minimum_inscribed    Int?
+  maximum_inscribed    Int?
+  target_population    String?
+  observation          String?
+  course_schedule      String?
+  offer_frequency      String?
+  certification_entity String?
+  formation_line       String?
+  region               String?
+  course_type          String
+  CertificationEntity  CertificationEntity?     @relation(fields: [certification_entity], references: [id], map: "CertificationEntity_fkey")
+  CourseType           CourseType               @relation(fields: [course_type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CourseType_fkey")
+  FormationLine        FormationLine?           @relation(fields: [formation_line], references: [id], map: "FormationLine_fkey")
+  OfferFrequency       OfferFrequency?          @relation(fields: [offer_frequency], references: [id], map: "OfferFrequency_fkey")
+  Region               Region?                  @relation(fields: [region], references: [id], map: "Region_fkey")
+  courseSchedules      TrainingCourseSchedule[]
+}
+
+model TrainingCourseSchedule {
+  id                 String         @id @default(uuid()) @db.Uuid
+  trainingCourse     TrainingCourse @relation(fields: [training_course_id], references: [id])
+  training_course_id String         @db.Uuid
+  courseSchedule     courseSchedule @relation(fields: [course_schedule_id], references: [id])
+  course_schedule_id String         @db.Uuid
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@unique([training_course_id, course_schedule_id])
+}
+
+model CourseHistory {
+  id       String  @id @default(dbgenerated("gen_random_uuid()"))
+  key      String?
+  document BigInt?
+  name     String?
+  course   String?
+  date     String?
+  mode     String?
+  cost     String?
+  type     String?
+  provider String?
+  year     Int?
+  month    String?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model CourseType {
+  id             String           @id @default(dbgenerated("gen_random_uuid()"))
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime         @db.Timestamptz(6)
+  name           String
+  state          Boolean
+  TrainingCourse TrainingCourse[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model AbilityType {
+  id                       String                     @id @default(dbgenerated("gen_random_uuid()"))
+  created_at               DateTime                   @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime                   @db.Timestamptz(6)
+  name                     String?
+  state                    Boolean?
+  SelectKnowledgeAndSkills SelectKnowledgeAndSkills[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectAffirmative {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  option     String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectKnowledgeAndSkills {
+  id          String       @id @default(dbgenerated("gen_random_uuid()"))
+  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime     @db.Timestamptz(6)
+  name        String?
+  type        String?
+  state       Boolean?
+  AbilityType AbilityType? @relation(fields: [type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "AbilityType_fkey")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectLanguage {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  language   String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectLanguageLevel {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  level      String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectStudyType {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  type       String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectWorkRole {
+  id                String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @db.Timestamptz(6)
+  role              String?
+  denomination_code String?
+  Occupations       String?
+  cuoc_code         String?
+  state             Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model JobOfferPostulation {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime @db.Timestamptz(6)
+  document_type      String
+  document_number    String
+  job_offer_id       String
+  postulation_status String?
+  information        Json     @db.Json
+  state              Boolean?
+}
+
+enum signStatusEnum {
+  PENDING
+  SIGNED
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model TechAssistanceRecord {
+  id                    String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at            DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime             @db.Timestamptz(6)
+  appointment_id        String               @db.Uuid
+  information           Json                 @db.Json
+  identification_type   String
+  identification_number String
+  download_links        Json?                @db.Json
+  state                 Boolean?
+  Appointments          Appointments         @relation(fields: [appointment_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Appointment_fkey")
+  TechRecordRevision    TechRecordRevision[]
+  signStatus            signStatusEnum       @default(PENDING)
+}
+
+model TechRecordRevision {
+  id                    String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  record_id             String               @db.Uuid
+  review                Json                 @db.JsonB
+  status                String?
+  identification_type   String
+  identification_number String
+  created_at            DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime             @db.Timestamptz(6)
+  state                 Boolean?
+  TechAssistanceRecord  TechAssistanceRecord @relation(fields: [record_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "TechAssistanceRecord_fkey")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model UserValidationHistory {
+  id                      String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at              DateTime @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime @db.Timestamptz(6)
+  identification_number   String
+  identification_type     String
+  validation_pass         Boolean
+  response_data           Json     @db.Json
+  law                     String?
+  business_name           String?
+  business_identification String?
+  state                   Boolean?
+}
+
+model UserTermsAcceptedHistory {
+  id                        String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at                DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime @default(now()) @db.Timestamptz(6)
+  identification_number     String
+  identification_type       String
+  terms_conditions_accepted Boolean
+  additional_info           Json?    @db.JsonB
+  state                     Boolean?
+}
+
+model CourseInscriptionAttemptHistory {
+  id                        String   @id @default(dbgenerated("gen_random_uuid()"))
+  identification_type       String
+  identification_number     String
+  courseSchedule_id         String   @db.Uuid
+  additional_info           Json?    @db.JsonB
+  created_at                DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime @default(now()) @db.Timestamptz(6)
+  state                     Boolean?
+  courseSchedule            courseSchedule @relation(fields: [courseSchedule_id], references: [id])
+}
+
+model CreaCourseRegisterHistory {
+  id                  String          @id @default(dbgenerated("gen_random_uuid()"))  
+  courseSchedule_id   String          @db.Uuid
+  students_num        Int
+  students_min        Int
+  additional_info     Json?           @db.JsonB
+  new_state           CourseState
+  created_at          DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime        @default(now()) @db.Timestamptz(6)
+  state               Boolean?
+  courseSchedule      courseSchedule  @relation(fields: [courseSchedule_id], references: [id])
+}
+
+enum AssignationOperation {
+  ASSIGN
+  REMOVE
+}
+
+model BusinessAdminUserAssignationHistory {
+  id                        String                    @id @default(dbgenerated("gen_random_uuid()"))
+  identification_type       String
+  identification_number     String
+  business_nit              String
+  operation                 AssignationOperation
+  user_id                   String
+  business_id               String                    @db.Uuid
+  additional_info           Json?                     @db.JsonB
+  created_at                DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                  @default(now()) @db.Timestamptz(6)
+  state                     Boolean?
+  businessProfile           BusinessProfile           @relation(fields: [business_id], references: [id])
+  userProfile               UserProfile               @relation(fields: [user_id], references: [id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectGender {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  gender     String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectAttentionPoint {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @db.Timestamptz(6)
+  attention_point String?
+  state           Boolean?
+}
+
+model SelectMunicipality {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  name       String
+  state      Boolean?
+}
+
+model SelectExperienceRange {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  range      String
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectBusinessType {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  type       String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectDisabilityType {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  disability String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectHiringType {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  type       String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectLaboralGestor {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  gestor     String?
+  code       String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectSalaryRange {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  range      String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectVacantReqLanguage {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  language   String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectVehicleType {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  vehicle    String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectWorkDays {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  day        String?
+  state      Boolean?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SelectWorkMode {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  mode       String?
+  state      Boolean?
+}
+
+model SelectAssistanceMode {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  mode       String?
+  state      Boolean?
+}
+
+model SelectVacancyOrigin {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  origin     String?
+  state      Boolean?
+}
+
+model SelectCountryList {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @db.Timestamptz(6)
+  country     String?
+  state       Boolean?
+}
+
+model SelectLicenseType {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @db.Timestamptz(6)
+  level       String?
+  state       Boolean?
+}
+
+enum AppointmentType {
+  CONSULT
+  ANALYSIS
+  WORKSHOP
+}
+
+model SelectAppointmentType {
+  id         String          @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at DateTime        @db.Timestamptz(6)
+  type       AppointmentType
+  label      String
+  state      Boolean?
+}
+
+enum Attendance {
+  Absent
+  Attended
+  Assigned
+  Signing
+  Revision
+  Rejected
+}
+
+enum Role {
+  administrador_pymes
+  consultor_pymes
+  analista_pymes
+  administrador_activos
+  administrador_general
+}
+
+model UserProfile {
+  id                    String                                 @id @default(dbgenerated("gen_random_uuid()"))
+  identification_number String?                    
+  identification_type   String?                    
+  type                  Json?                    
+  business              Json?                    
+  created_at            DateTime                               @default(now()) @db.Timestamp(6)
+  updated_at            DateTime                               @db.Timestamp(6)
+  state                 Boolean?                     
+  businessProfile       BusinessProfile[]                      @relation("UserProfileBusiness")
+  role                  Role
+  name                  String?
+  email                 String?
+  businessAdminHistory  BusinessAdminUserAssignationHistory[]
+}
+
+/// Business GrowthPlan Report
+
+model GrowthPlanReport {
+  id                   String     @id @default(uuid()) @db.Uuid
+  pillar_id            String     @db.Uuid
+  pillar_indicator     String?
+  data_source          String?
+  base_line            Float?
+  pillar_proposed_goal Float?
+  month_one_goal       Float?
+  month_one_real       Float?
+  month_two_goal       Float?
+  month_two_real       Float?
+  month_three_goal     Float?
+  month_three_real     Float?
+  month_four_goal      Float?
+  month_four_real      Float?
+  month_five_goal      Float?
+  month_five_real      Float?
+  month_six_goal       Float?
+  month_six_real       Float?
+  created_at           DateTime?  @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?  @db.Timestamptz(6)
+  state                Boolean?
+  GrowthPlan           GrowthPlan @relation(fields: [pillar_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "GrowthPlan_fkey")
+}
+
+enum PsyTestGroupStatus {
+  PENDING
+  INPROGRESS
+  FINALIZED
+}
+
+enum PsyTestGroupAssignationStatus {
+  PENDING
+  INPROGRESS
+  FINALIZED
+  RETAKE
+}
+
+model PsyTestExam {
+  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                    String
+  created_at              DateTime                  @db.Timestamptz(6)
+  updated_at              DateTime                  @db.Timestamptz(6)
+  state                   Boolean?
+  PsyTestGroupAssignation PsyTestGroupAssignation[]
+  PsyTestQuestions        PsyTestQuestions[]
+}
+
+model PsyTestGroup {
+  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sequence                Int                       @default(autoincrement())
+  name                    String
+  number_persons          Decimal                   @default(0) @db.Decimal
+  file_name               String
+  md5_sum                 String
+  current_status          PsyTestGroupStatus        @default(PENDING)
+  crea_course_id          String?                   @db.Uuid
+  crea_entrepreneurship   Boolean?
+  created_at              DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                  @db.Timestamptz(6)
+  state                   Boolean?
+  PsyTestGroupAssignation PsyTestGroupAssignation[]
+  courseSchedule          courseSchedule?           @relation(fields: [crea_course_id], references: [id])
+}
+
+model PsyTestGroupAssignation {
+  id                String                        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  PsyTestPerson_id  String                        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  PsyTestGroup_id   String                        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  PsyTestExam_id    String                        @db.Uuid
+  PsyTestAnswers_id String?                       @db.Uuid
+  PsyTestExam       PsyTestExam                   @relation(fields: [PsyTestExam_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  PsyTestGroup      PsyTestGroup                  @relation(fields: [PsyTestGroup_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  PsyTestPerson     PsyTestPerson                 @relation(fields: [PsyTestPerson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  PsyTestAnswers    PsyTestAnswers?
+  state             Boolean?
+  current_status    PsyTestGroupAssignationStatus @default(PENDING)
+  created_at        DateTime                      @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime                      @default(now()) @db.Timestamptz(6)
+  retake_id         String?                       @db.Uuid
+  original          PsyTestGroupAssignation?      @relation("ExamReassignation", fields: [retake_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  retake            PsyTestGroupAssignation[]     @relation("ExamReassignation")
+  retake_reason     String?
+}
+
+model PsyTestPerson {
+  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  document_type           String                    @default("CC")
+  document_number         String
+  name                    String
+  last_name               String?
+  email                   String
+  created_at              DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                  @db.Timestamptz(6)
+  state                   Boolean?
+  PsyTestGroupAssignation PsyTestGroupAssignation[]
+}
+
+model BusinessUnregisteredHistory {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime @db.Timestamptz(6)
+  identification_number String
+  identification_type   String
+  state                 Boolean?
+}
+
+enum PsyTestDimensionQuestions {
+  ATTITUDE
+  DO
+  KNOW
+}
+
+enum PsyTestCompetencyQuestions {
+  VISION_OF_THE_FUTURE
+  SOCIAL_SENSITIVITY
+  LEADERSHIP
+  DECISION_MAKING
+  ACHIEVEMENT_ORIENTATION
+  ACTION_INITIATIVE
+  NETWORK_BUILDING
+  CREATIVITY
+  ADAPTATION_TO_CHANGE
+}
+
+model PsyTestQuestions {
+  id                   String                       @id @default(dbgenerated("gen_random_uuid()"))
+  created_at           DateTime                     @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime                     @db.Timestamptz(6)
+  number               Int
+  question             String
+  dimension            PsyTestDimensionQuestions
+  competency           PsyTestCompetencyQuestions[]
+  correct_answer       Boolean
+  exam_id              String                       @db.Uuid
+  exam                 PsyTestExam                  @relation(fields: [exam_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  PsyTestSingleAnswers PsyTestSingleAnswers[]
+}
+
+enum PsyTestAnswersStatus {
+  PENDING
+  INPROGRESS
+  FINALIZED
+}
+
+model PsyTestAnswers {
+  id                         String                  @id @default(dbgenerated("gen_random_uuid()"))
+  created_at                 DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime                @db.Timestamptz(6)
+  examName                   String
+  status                     PsyTestAnswersStatus
+  singleAnswers              PsyTestSingleAnswers[]
+  psyTestGroupAssignation_id String                  @unique @db.Uuid
+  PsyTestGroupAssignation    PsyTestGroupAssignation @relation(fields: [psyTestGroupAssignation_id], references: [id])
+  results                    Json?                   @db.JsonB
+}
+
+model PsyTestSingleAnswers {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()"))
+  PsyTestQuestions_id String
+  PsyTestQuestion     PsyTestQuestions @relation(fields: [PsyTestQuestions_id], references: [id])
+  question            String
+  answer              Boolean?
+  psyTestAnswersId    String
+  psyTestAnswers      PsyTestAnswers   @relation(fields: [psyTestAnswersId], references: [id])
+  created_at          DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime         @db.Timestamptz(6)
+}
