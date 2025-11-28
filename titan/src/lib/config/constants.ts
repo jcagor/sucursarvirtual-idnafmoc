@@ -382,6 +382,7 @@ export enum employabilityMenuItemTites {
   MENTORING_CARD = "Mentorías",
   TRAINING_REMISSION = "Mis formaciones",
   PSYCHOMETRIC_TEST = "Prueba psicométrica",
+  CHARACTERIZATION = "Caracterización: inicia tu ruta de acompañamiento",
 }
 
 const employabilityCardItemWidth = 400;
@@ -434,6 +435,24 @@ export const employabilityMenuItems: DescriptionLinkCardInterface[] = [
     description: [
       "Te apoyaremos para mejorar tus condiciones laborales y que logres",
       "movilizarte hacia la productividad o un mejor empleo.",
+    ],
+    canAccess: [
+      MPAC_API_USER_TYPE.CESANT,
+      MPAC_API_USER_TYPE.UNIVERSAL,
+      MPAC_API_USER_TYPE.ACTIVE_WORKER,
+      MPAC_API_USER_TYPE.BENEFICIARY,
+    ],
+  },
+    {
+    name: employabilityMenuItemTites.CHARACTERIZATION,
+    href: "/characterization",
+    urlImage: "/icons/see-credits.png",
+    width: employabilityCardItemWidth,
+    height: employabilityCardItemHeigh,
+    imageClassname:
+      "w-[4.548rem] h-[3.214rem] md:w-[4.548rem] md:h-[3.214rem] md:ml-6 mx-auto",
+    description: [
+      "Inicia tu ruta de acompañamiento",
     ],
     canAccess: [
       MPAC_API_USER_TYPE.CESANT,
