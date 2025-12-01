@@ -14,6 +14,12 @@ const steps = [
     description:
       'Continuemos con tu información de contacto y ubicación para mantenernos comunicados.',
   },
+  {
+    emoji: '📊',
+    title: 'Identificación del Perfil del Usuario',
+    description:
+      'Las siguientes preguntas nos permitirán entender quién eres, en qué momento de tu vida o carrera estás, y qué necesitas para avanzar hacia tus metas',
+  },
 ];
 
 export const CharacterizationForm = ({ surveyComponent, survey }: any) => {
