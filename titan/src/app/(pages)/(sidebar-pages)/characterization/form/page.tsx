@@ -1,5 +1,6 @@
-import { CharacterizationFormTemplate } from 'presentation/components/templates/characterization/CharacterizationFormTemplate';
+import { CharacterizationFormTemplate } from 'presentation';
+import { characterizationFormJson } from 'presentation/components/templates/characterization/form-json';
 
 export default function CharacterizationFormPage() {
-  return <CharacterizationFormTemplate />;
+  return <CharacterizationFormTemplate json={characterizationFormJson}   />;
 }
