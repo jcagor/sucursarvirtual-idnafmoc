@@ -31,28 +31,38 @@ export const CharacterizationFormTemplate = ({ json }: Props) => {
       setActiveStep(page < 0 ? 0 : page);
     });
 
-    const initialPage = survey.currentPageNo;
-    setActiveStep(initialPage < 0 ? 0 : initialPage);
+    const initial = survey.currentPageNo;
+    setActiveStep(initial < 0 ? 0 : initial);
   }, [survey]);
 
   return (
-    <div className='w-full max-w-[1200px] mx-auto py-6'>
+    <div className='w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6'>
       <Breadcrumb />
 
-      <div className='px-4 mb-6'>
-        <h1 className='text-3xl font-bold text-[#003DA5]'>
+      <div className='mb-6'>
+        <h1 className='text-xl sm:text-2xl md:text-3xl font-bold text-[#003DA5]'>
           Formulario de Caracterización
         </h1>
 
-        <p className='mt-2 text-gray-600 max-w-2xl'>
+        <p className='mt-2 text-sm sm:text-base text-gray-600 max-w-2xl'>
           Este formulario nos permitirá conocerte mejor y ofrecerte servicios
-          personalizados…
+          personalizados según tus necesidades.
         </p>
       </div>
 
-      <ProgressSteps steps={steps} activeStep={activeStep} />
+      <div
+        className='
+    w-full 
+    mb-8 
+    overflow-x-auto   
+    lg:overflow-x-visible 
+    no-scrollbar
+  '
+      >
+        <ProgressSteps steps={steps} activeStep={activeStep} />
+      </div>
 
-      <div className='mt-10 px-4'>
+      <div className='survey-wrapper w-full'>
         <Survey model={survey} />
       </div>
     </div>
