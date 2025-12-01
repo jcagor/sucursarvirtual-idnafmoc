@@ -15,70 +15,70 @@ interface Props {
 }
 
 export const Auth = ({ children }: Props) => {
-  const { data: session, status, update } = useSession();
+  // const { data: session, status, update } = useSession();
 
-  const {
-    status: identityStatus,
-    updateToken,
-    setUpdateToken,
-  } = useDigitalIdentityStatus();
+  // const {
+  //   status: identityStatus,
+  //   updateToken,
+  //   setUpdateToken,
+  // } = useDigitalIdentityStatus();
 
-  const { setTermsAndConditionsName, initializeTermsAndConditions } =
-    useTermsAndConditions();
+  // const { setTermsAndConditionsName, initializeTermsAndConditions } =
+  //   useTermsAndConditions();
 
-  const logout = async () => {
-    const logoutUseCase = appContainer.get<LogoutKeycloakUseCase>(
-      USECASES_TYPES._LogoutKeycloakUseCase
-    );
-    await logoutUseCase.execute(session?.access_token).then(() => {
-      signOut({ callbackUrl: "/" });
-    });
-  };
+  // const logout = async () => {
+  //   const logoutUseCase = appContainer.get<LogoutKeycloakUseCase>(
+  //     USECASES_TYPES._LogoutKeycloakUseCase
+  //   );
+  //   await logoutUseCase.execute(session?.access_token).then(() => {
+  //     signOut({ callbackUrl: "/" });
+  //   });
+  // };
 
-  const updateTokenInfo = async () => {
-    if (updateToken) {
-      const refreshData = await refreshAccessToken(session);
-      update(refreshData)
-        .then(() => {
-          setUpdateToken(false);
-        })
-        .catch(() => {
-          setUpdateToken(false);
-        })
-        .finally(() => {
-          setUpdateToken(false);
-        });
-    }
-  };
+  // const updateTokenInfo = async () => {
+  //   if (updateToken) {
+  //     const refreshData = await refreshAccessToken(session);
+  //     update(refreshData)
+  //       .then(() => {
+  //         setUpdateToken(false);
+  //       })
+  //       .catch(() => {
+  //         setUpdateToken(false);
+  //       })
+  //       .finally(() => {
+  //         setUpdateToken(false);
+  //       });
+  //   }
+  // };
 
-  useEffect(() => {
-    updateTokenInfo();
-  }, [updateToken]);
+  // useEffect(() => {
+  //   updateTokenInfo();
+  // }, [updateToken]);
 
-  useEffect(() => {
-    if (identityStatus === DIGITAL_IDENTITY_STATUS_MESSAGE.INCOMPLETE) {
-      setTermsAndConditionsName(USER_AUTHORIZATION.biometricTermsAndConditions);
-      initializeTermsAndConditions();
-    }
-  }, [status, setTermsAndConditionsName, initializeTermsAndConditions]);
+  // useEffect(() => {
+  //   if (identityStatus === DIGITAL_IDENTITY_STATUS_MESSAGE.INCOMPLETE) {
+  //     setTermsAndConditionsName(USER_AUTHORIZATION.biometricTermsAndConditions);
+  //     initializeTermsAndConditions();
+  //   }
+  // }, [status, setTermsAndConditionsName, initializeTermsAndConditions]);
 
-  useEffect(() => {
-    const handleAuth = async () => {
-      if (status === "loading") return;
+  // useEffect(() => {
+  //   const handleAuth = async () => {
+  //     if (status === "loading") return;
 
-      if (status === "unauthenticated" || !session) {
-        await signIn("keycloak", {
-          callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
-        });
-        return;
-      } else if (session && session.error === "RefreshAccessTokenError") {
-        await logout();
-        return;
-      }
-    };
+  //     if (status === "unauthenticated" || !session) {
+  //       await signIn("keycloak", {
+  //         callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
+  //       });
+  //       return;
+  //     } else if (session && session.error === "RefreshAccessTokenError") {
+  //       await logout();
+  //       return;
+  //     }
+  //   };
 
-    handleAuth();
-  }, [session, status]);
+  //   handleAuth();
+  // }, [session, status]);
 
   // useEffect(() => {
   //   const handleVisibilityChange = async () => {
@@ -96,9 +96,9 @@ export const Auth = ({ children }: Props) => {
   //   };
   // }, [session]);
 
-  if (status === "loading" || status === "unauthenticated") {
-    return <LoadingAnimation className="z-[6000]" />;
-  }
+  // if (status === "loading" || status === "unauthenticated") {
+  //   return <LoadingAnimation className="z-[6000]" />;
+  // }
 
   return <> {children}</>;
 };
