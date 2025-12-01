@@ -26,6 +26,12 @@ const steps = [
     description:
       'Esta sección nos ayuda a identificar si haces parte de algún grupo que requiere atención prioritaria.',
   },
+  {
+    emoji: '🏠',
+    title: 'Entorno Familiar y Comunitario',
+    description:
+      'Esta información nos ayuda a comprender tu contexto familiar y social.',
+  },
 ];
 
 export const CharacterizationForm = ({ surveyComponent, survey }: any) => {
