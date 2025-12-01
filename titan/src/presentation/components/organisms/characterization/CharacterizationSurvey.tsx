@@ -6,7 +6,7 @@ import "survey-core/survey-core.min.css";
 
 export const CharacterizationSurvey = ({ model }: { model: Model }) => {
   return (
-    <div className="w-full">
+    <div className="w-full p-2">
         <Survey model={model} />
     </div>
   );

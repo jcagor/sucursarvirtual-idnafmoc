@@ -54,7 +54,10 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
   survey.css = {
     root: 'w-full',
 
-    page: !['identificacion_perfil_usuario'].includes(survey.currentPage.name)
+    page: ![
+      'identificacion_perfil_usuario',
+      'condition_prioritization_vulnerability',
+    ].includes(survey.currentPage.name)
       ? 'w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6'
       : 'grid grid-cols-1',
 
@@ -98,6 +101,18 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
     radiogroup: {
       root: 'w-full flex flex-col gap-3',
       item: 'w-full block rounded-xl bg-[#F4F4F5] px-4 py-4 cursor-pointer text-gray-800 hover:bg-[#E6E6E7] transition font-medium',
+      label: 'w-full flex items-center gap-4',
+    },
+
+    checkbox: {
+      root: 'w-full flex flex-col gap-3',
+
+      item: `
+    w-full block rounded-xl bg-[#F4F4F5]
+    px-4 py-4 cursor-pointer text-gray-800
+    hover:bg-[#E6E6E7] transition font-medium
+  `,
+
       label: 'w-full flex items-center gap-4',
     },
   };
