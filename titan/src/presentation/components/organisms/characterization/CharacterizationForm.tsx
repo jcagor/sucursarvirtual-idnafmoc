@@ -20,6 +20,12 @@ const steps = [
     description:
       'Las siguientes preguntas nos permitirán entender quién eres, en qué momento de tu vida o carrera estás, y qué necesitas para avanzar hacia tus metas',
   },
+  {
+    emoji: '⭐',
+    title: 'Condición de Priorización o Vulnerabilidad',
+    description:
+      'Esta sección nos ayuda a identificar si haces parte de algún grupo que requiere atención prioritaria.',
+  },
 ];
 
 export const CharacterizationForm = ({ surveyComponent, survey }: any) => {
