@@ -2,7 +2,7 @@
 
 import { Survey } from 'survey-react-ui';
 import { Model } from 'survey-core';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Breadcrumb } from 'presentation/components/atoms/common/breadcrumb/Breadcrumb';
 import { ProgressSteps } from 'presentation/components/molecules/characterization/ProgressSteps';
 
@@ -16,23 +16,74 @@ const steps = [
   { id: 7, title: 'Intereses en Servicios' },
 ];
 
+const STORAGE_KEY = 'alv_form_progress';
+
 interface Props {
   json: any;
 }
 
 export const CharacterizationFormTemplate = ({ json }: Props) => {
+  const survey = useMemo(() => new Model(json), [json]);
+
   const [activeStep, setActiveStep] = useState(0);
 
-  const survey = new Model(json);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const { data, pageNo } = JSON.parse(stored);
+
+        if (data) survey.data = data;
+        if (typeof pageNo === 'number') survey.currentPageNo = pageNo;
+      }
+    } catch (err) {
+      console.error('Error loading survey progress:', err);
+    }
+
+    const page = survey.currentPageNo;
+    setActiveStep(page < 0 ? 0 : page);
+  }, [survey]);
 
   useEffect(() => {
-    survey.onCurrentPageChanged.add((sender) => {
-      const page = sender.currentPageNo;
-      setActiveStep(page < 0 ? 0 : page);
-    });
+    const saveProgress = () => {
+      const payload = {
+        data: survey.data,
+        pageNo: survey.currentPageNo,
+      };
 
-    const initial = survey.currentPageNo;
-    setActiveStep(initial < 0 ? 0 : initial);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    };
+
+    survey.onValueChanged.add(saveProgress);
+    survey.onCurrentPageChanged.add((sender) => {
+      setActiveStep(sender.currentPageNo);
+      saveProgress();
+    });
+    survey.onComplete.add(saveProgress);
+
+    return () => {
+      survey.onValueChanged.remove(saveProgress);
+      survey.onCurrentPageChanged.remove(saveProgress);
+      survey.onComplete.remove(saveProgress);
+    };
+  }, [survey]);
+
+  useEffect(() => {
+    survey.onComplete.add((sender) => {
+      const raw = sender.data;
+
+      const finalPayload = {
+        postulation: {
+          id: crypto.randomUUID(),
+          ...raw, // todos los campos básicos
+          date_create: new Date().toISOString(),
+          date_update: new Date().toISOString(),
+          log_send_email: false,
+        },
+      };
+
+      console.log('📌 Final payload to send:', finalPayload);
+    });
   }, [survey]);
 
   return (
@@ -50,15 +101,8 @@ export const CharacterizationFormTemplate = ({ json }: Props) => {
         </p>
       </div>
 
-      <div
-        className='
-    w-full 
-    mb-8 
-    overflow-x-auto   
-    lg:overflow-x-visible 
-    no-scrollbar
-  '
-      >
+      {/* Barra de pasos */}
+      <div className='w-full mb-8 overflow-x-auto lg:overflow-x-visible no-scrollbar'>
         <ProgressSteps steps={steps} activeStep={activeStep} />
       </div>
 
