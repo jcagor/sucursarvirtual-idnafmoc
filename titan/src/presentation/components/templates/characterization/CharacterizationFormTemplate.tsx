@@ -10,9 +10,12 @@ import {
 } from 'presentation/components/organisms';
 import { Breadcrumb } from 'presentation/components/atoms';
 import { steps } from './constants/steps';
+import { CharacterizationSteps } from './form-json';
+import { useRouter } from 'next/navigation';
 
 export const CharacterizationFormTemplate = ({ json }: any) => {
   const [activeStep, setActiveStep] = useState(0);
+  const router = useRouter();
 
   const survey = useMemo(() => {
     const m = new Model(json);
@@ -24,19 +27,30 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
     });
 
     m.showNavigationButtons = false;
+    m.showCompletedPage = false;
+    m.onCompleting.add(() => {
+      router.replace('/characterization/success');
+    });
 
     // restaurar estado
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('characterization-progress');
-      // if (saved) m.state = saved;
+      const savedData = localStorage.getItem('characterization-progress');
+      const savedPage = localStorage.getItem('characterization-page');
 
-      if (m.currentPageNo < 0) m.currentPageNo = 0;
+      if (savedData) {
+        m.data = JSON.parse(savedData); 
+      }
+
+      if (savedPage) {
+        m.currentPageNo = Number(savedPage); 
+      }
     }
 
     // eventos
     m.onCurrentPageChanged.add((sender) => {
       if (typeof window !== 'undefined') {
-        localStorage.setItem('characterization-progress', sender.state);
+        localStorage.setItem('characterization-progress', JSON.stringify(sender.data));
+        localStorage.setItem('characterization-page', sender.currentPageNo.toString());
       }
       setActiveStep(sender.currentPageNo);
     });
@@ -45,6 +59,7 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
       console.log('DONE', sender.data);
       if (typeof window !== 'undefined') {
         localStorage.removeItem('characterization-progress');
+        localStorage.removeItem('characterization-page');
       }
     });
 
@@ -57,9 +72,13 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
     page: ![
       'identificacion_perfil_usuario',
       'condition_prioritization_vulnerability',
+      'entorno_familiar_comunitario',
+      'ingresos_tecnologia',
+      'aspiracion',
+      'ruta_emprendimiento',
     ].includes(survey.currentPage.name)
-      ? 'w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6'
-      : 'grid grid-cols-1',
+      ? 'w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 p-2'
+      : 'grid grid-cols-1 p-2',
 
     row: 'w-full !flex !flex-col !gap-0',
     rowMultiple: 'w-full !flex !flex-col',
@@ -73,6 +92,12 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
     },
 
     text: {
+      root:
+        'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
+        'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
+    },
+
+    comment: {
       root:
         'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
         'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
@@ -135,10 +160,11 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
         </p>
       </div>
 
-      <div className='w-full mb-8 overflow-x-auto lg:overflow-x-visible no-scrollbar'>
-        <ProgressSteps steps={steps} activeStep={activeStep} />
-      </div>
-
+      {CharacterizationSteps.RutaEmprendimiento !== activeStep && (
+        <div className='w-full mb-8 overflow-x-auto lg:overflow-x-visible no-scrollbar'>
+          <ProgressSteps steps={steps} activeStep={activeStep} />
+        </div>
+      )}
       <CharacterizationForm
         surveyComponent={<CharacterizationSurvey model={survey} />}
         survey={survey}

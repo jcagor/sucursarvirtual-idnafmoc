@@ -32,6 +32,24 @@ const steps = [
     description:
       'Esta información nos ayuda a comprender tu contexto familiar y social.',
   },
+  {
+    emoji: '💰',
+    title: 'Situación Socioeconómica y Conectividad',
+    description:
+      'Esta información nos ayuda a entender tu situación económica y tus capacidades tecnológicas.',
+  },
+  {
+    emoji: '🎯',
+    title: 'Intereses en Servicios de  Aprendizaje',
+    description:
+      'Ahora queremos conocer cuál es tu interés principal. Esta selección definirá tu ruta de acompañamiento personalizada.',
+  },
+  {
+    emoji: '🚀',
+    title: 'Ruta de Emprendimiento',
+    description:
+      'Queremos conocer más sobre tu emprendimiento o tu idea de negocio para brindarte el mejor acompañamiento.',
+  },
 ];
 
 export const CharacterizationForm = ({ surveyComponent, survey }: any) => {
@@ -76,9 +94,15 @@ export const CharacterizationForm = ({ surveyComponent, survey }: any) => {
             px-10 py-3 text-base font-semibold shadow-md
             hover:bg-[#89c200] transition
           '
-          onClick={() => survey.nextPage()}
+          onClick={() => {
+            if (survey.isLastPage) {
+              survey.completeLastPage();
+            } else {
+              survey.nextPage();
+            }
+          }}
         >
-          Siguiente
+          {survey.isLastPage ? 'Finalizar' : 'Siguiente'}
         </button>
       </div>
     </div>
