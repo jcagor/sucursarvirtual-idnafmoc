@@ -23,55 +23,12 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
       isPanelless: true,
     });
 
-    m.css = {
-      root: 'w-full',
-
-      page: 'w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6',
-
-      row: 'w-full !flex !flex-col !gap-0',
-      rowMultiple: 'w-full !flex !flex-col',
-
-      element: 'w-full',
-
-      question: {
-        mainRoot: 'w-full flex flex-col',
-        content: 'w-full',
-        title: 'text-sm font-semibold text-gray-700 mb-2',
-      },
-
-      text: {
-        root:
-          'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
-          'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
-      },
-
-      dropdown: {
-        control:
-          'w-full rounded-xl border border-gray-300 px-4 py-1 bg-white text-gray-800 appearance-none ' +
-          'focus:outline-none focus:ring-2 focus:ring-[#003DA5] flex justify-between',
-        popup: 'bg-white border border-gray-200 rounded-xl shadow-lg',
-      },
-
-      selectbase: {
-        item: 'px-4 py-3 cursor-pointer hover:bg-gray-100 text-gray-700',
-
-        itemSelected:
-          'px-4 py-3 cursor-pointer bg-[#003DA5] text-white font-semibold',
-
-        itemHovered: 'px-4 py-3 cursor-pointer bg-gray-100 text-gray-700',
-      },
-
-      body: {
-        root: 'max-w-full',
-      },
-    };
-
     m.showNavigationButtons = false;
 
     // restaurar estado
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('characterization-progress');
-      if (saved) m.state = saved;
+      // if (saved) m.state = saved;
 
       if (m.currentPageNo < 0) m.currentPageNo = 0;
     }
@@ -93,6 +50,57 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
 
     return m;
   }, [json]);
+
+  survey.css = {
+    root: 'w-full',
+
+    page: !['identificacion_perfil_usuario'].includes(survey.currentPage.name)
+      ? 'w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6'
+      : 'grid grid-cols-1',
+
+    row: 'w-full !flex !flex-col !gap-0',
+    rowMultiple: 'w-full !flex !flex-col',
+
+    element: 'w-full',
+
+    question: {
+      mainRoot: 'w-full flex flex-col',
+      content: 'w-full',
+      title: 'text-sm font-semibold text-gray-700 mb-2',
+    },
+
+    text: {
+      root:
+        'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
+        'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
+    },
+
+    dropdown: {
+      control:
+        'w-full rounded-xl border border-gray-300 px-4 py-1 bg-white text-gray-800 appearance-none ' +
+        'focus:outline-none focus:ring-2 focus:ring-[#003DA5] flex justify-between',
+      popup: 'bg-white border border-gray-200 rounded-xl shadow-lg',
+    },
+
+    selectbase: {
+      item: 'px-4 py-3 cursor-pointer hover:bg-gray-100 text-gray-700',
+
+      itemSelected:
+        'px-4 py-3 cursor-pointer bg-[#003DA5] text-white font-semibold',
+
+      itemHovered: 'px-4 py-3 cursor-pointer bg-gray-100 text-gray-700',
+    },
+
+    body: {
+      root: 'max-w-full',
+    },
+
+    radiogroup: {
+      root: 'w-full flex flex-col gap-3',
+      item: 'w-full block rounded-xl bg-[#F4F4F5] px-4 py-4 cursor-pointer text-gray-800 hover:bg-[#E6E6E7] transition font-medium',
+      label: 'w-full flex items-center gap-4',
+    },
+  };
 
   useEffect(() => {
     setActiveStep(survey.currentPageNo);

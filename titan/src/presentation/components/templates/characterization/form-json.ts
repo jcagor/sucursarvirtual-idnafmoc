@@ -169,5 +169,85 @@ export const characterizationFormJson = {
         },
       ],
     },
+    {
+      name: 'identificacion_perfil_usuario',
+      elements: [
+        {
+          type: 'radiogroup',
+          name: 'situacion_actual',
+          title:
+            '¿Cuál de las siguientes opciones describe mejor tu situación actual?',
+          isRequired: true,
+          choices: [
+            '📚 Soy estudiante de colegio',
+            '💼 Aspirante o estudiante técnico-tecnológico',
+            '🎓 Me gradué recientemente',
+            '🔎 Estoy buscando empleo',
+            '👷 Soy trabajador activo',
+            '🚀 Tengo una idea de negocio o emprendimiento en marcha',
+            '⭕ Ninguna',
+          ],
+        },
+
+        /* ============================
+            BLOQUE: Soy estudiante de colegio
+           ============================ */
+        {
+          type: 'radiogroup',
+          name: 'colegio_estudiante',
+          title: '¿En qué colegio estudias?',
+          visibleIf: "{situacion_actual} = '📚 Soy estudiante de colegio'",
+          isRequired: true,
+          choices: ['Colegio Comfandi', 'Otro'],
+        },
+        {
+          type: 'text',
+          name: 'colegio_otro_nombre',
+          title: 'Nombre del colegio:',
+          visibleIf:
+            "{situacion_actual} = '📚 Soy estudiante de colegio' and {colegio_estudiante} = 'Otro'",
+          isRequired: true,
+          placeholder: 'Escribe el nombre del colegio',
+        },
+
+        /* ==========================================
+            BLOQUE: Aspirante o estudiante técnico-tecnológico
+           ========================================== */
+        {
+          type: 'radiogroup',
+          name: 'inst_tecnica',
+          title: '¿Dónde estudias o aspiras estudiar?',
+          visibleIf:
+            "{situacion_actual} = '💼 Aspirante o estudiante técnico-tecnológico'",
+          isRequired: true,
+          choices: ['Instituto de Educación Comfandi', 'Otro. ¿Cuál?'],
+        },
+        {
+          type: 'text',
+          name: 'inst_tecnica_otro',
+          title: 'Escribe el nombre de la institución:',
+          visibleIf:
+            "{situacion_actual} = '💼 Aspirante o estudiante técnico-tecnológico' and {inst_tecnica} = 'Otro. ¿Cuál?'",
+          isRequired: true,
+          placeholder: 'Nombre de la institución',
+        },
+
+        /* ==========================================
+            BLOQUE: Estoy buscando empleo
+           ========================================== */
+        {
+          type: 'radiogroup',
+          name: 'situacion_empleo',
+          title: '¿Cuál es tu situación actual respecto al empleo?',
+          visibleIf: "{situacion_actual} = '🔎 Estoy buscando empleo'",
+          isRequired: true,
+          choices: [
+            'Desempleado',
+            'Trabajando pero quiero cambiar de empleo',
+            'Busco primera experiencia',
+          ],
+        },
+      ],
+    },
   ],
 };
