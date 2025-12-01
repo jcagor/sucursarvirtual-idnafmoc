@@ -11,3 +11,4 @@ export * from "./independents";
 export * from "./employability";
 export * from "./postulation";
 export * from "./psicometric-test";
+export * from "./characterization";

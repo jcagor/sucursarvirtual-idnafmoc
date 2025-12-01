@@ -47,6 +47,8 @@
     "react-spinners": "^0.13.8",
     "react-toastify": "^11.0.5",
     "reflect-metadata": "^0.2.1",
+    "survey-core": "^2.4.0",
+    "survey-react-ui": "^2.4.0",
     "sweetalert2": "^11.19.1",
     "uuid": "^11.1.0",
     "webpack-bundle-analyzer": "^4.10.2",
