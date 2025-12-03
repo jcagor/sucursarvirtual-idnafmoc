@@ -19,6 +19,7 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
 
   const survey = useMemo(() => {
     const m = new Model(json);
+
     m.applyTheme({
       themeName: 'plain',
       colorPalette: 'light',
@@ -28,43 +29,42 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
 
     m.showNavigationButtons = false;
     m.showCompletedPage = false;
-    m.onCompleting.add(() => {
-      router.replace('/characterization/success');
-    });
 
-    // restaurar estado
     if (typeof window !== 'undefined') {
       const savedData = localStorage.getItem('characterization-progress');
       const savedPage = localStorage.getItem('characterization-page');
 
-      if (savedData) {
-        m.data = JSON.parse(savedData); 
-      }
-
-      if (savedPage) {
-        m.currentPageNo = Number(savedPage); 
-      }
+      if (savedData) m.data = JSON.parse(savedData);
+      if (savedPage) m.currentPageNo = Number(savedPage);
     }
 
-    // eventos
-    m.onCurrentPageChanged.add((sender) => {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('characterization-progress', JSON.stringify(sender.data));
-        localStorage.setItem('characterization-page', sender.currentPageNo.toString());
-      }
-      setActiveStep(sender.currentPageNo);
-    });
+    const saveProgress = (sender: any) => {
+      if (typeof window === 'undefined') return;
 
-    m.onComplete.add((sender) => {
-      console.log('DONE', sender.data);
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('characterization-progress');
-        localStorage.removeItem('characterization-page');
-      }
+      localStorage.setItem(
+        'characterization-progress',
+        JSON.stringify(sender.data)
+      );
+
+      localStorage.setItem(
+        'characterization-page',
+        sender.currentPageNo.toString()
+      );
+    };
+
+    m.onCurrentPageChanged.add(saveProgress);
+
+    m.onValueChanged.add(saveProgress);
+
+    m.onComplete.add(() => {
+      localStorage.removeItem('characterization-progress');
+      localStorage.removeItem('characterization-page');
+
+      router.replace('/characterization/success');
     });
 
     return m;
-  }, [json]);
+  }, [json, router]);
 
   survey.css = {
     root: 'w-full',
