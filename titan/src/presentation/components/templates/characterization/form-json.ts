@@ -9,9 +9,14 @@ export const characterizationFormJson = {
   fitWidth: true,
   pages: [
     {
+      banner: {
+        emoji: '👤',
+        title: 'Datos Básicos - Información Personal',
+        description: 'Comencemos conociendo un poco sobre ti.',
+      },
       name: 'basic_info',
       questionsLayout: 'table',
-      colCount: 2,
+      layout: '2-cols',
       elements: [
         {
           type: 'text',
@@ -97,9 +102,15 @@ export const characterizationFormJson = {
       ],
     },
     {
+      banner: {
+        emoji: '📍',
+        title: 'Datos Básicos - Ubicación y Contacto',
+        description:
+          'Continuemos con tu información de contacto y ubicación para mantenernos comunicados.',
+      },
       name: 'basic_info_address',
       questionsLayout: 'table',
-      colCount: 2,
+      layout: '2-cols',
       elements: [
         {
           type: 'dropdown',
@@ -170,7 +181,14 @@ export const characterizationFormJson = {
       ],
     },
     {
+      banner: {
+        emoji: '📊',
+        title: 'Identificación del Perfil del Usuario',
+        description:
+          'Las siguientes preguntas nos permitirán entender quién eres, en qué momento de tu vida o carrera estás, y qué necesitas para avanzar hacia tus metas',
+      },
       name: 'identificacion_perfil_usuario',
+      layout: '1-col',
       elements: [
         {
           type: 'radiogroup',
@@ -187,6 +205,7 @@ export const characterizationFormJson = {
             '🚀 Tengo una idea de negocio o emprendimiento en marcha',
             '⭕ Ninguna',
           ],
+          width: 'full',
         },
 
         /* ============================
@@ -250,7 +269,14 @@ export const characterizationFormJson = {
       ],
     },
     {
+      banner: {
+        emoji: '⭐',
+        title: 'Condición de Priorización o Vulnerabilidad',
+        description:
+          'Esta sección nos ayuda a identificar si haces parte de algún grupo que requiere atención prioritaria.',
+      },
       name: 'condition_prioritization_vulnerability',
+      layout: '1-col',
       elements: [
         {
           type: 'checkbox',
@@ -323,7 +349,14 @@ export const characterizationFormJson = {
       ],
     },
     {
+      banner: {
+        emoji: '🏠',
+        title: 'Entorno Familiar y Comunitario',
+        description:
+          'Esta información nos ayuda a comprender tu contexto familiar y social.',
+      },
       name: 'entorno_familiar_comunitario',
+      layout: '1-col',
       elements: [
         {
           type: 'radiogroup',
@@ -378,7 +411,14 @@ export const characterizationFormJson = {
       ],
     },
     {
+      banner: {
+        emoji: '💰',
+        title: 'Situación Socioeconómica y Conectividad',
+        description:
+          'Esta información nos ayuda a entender tu situación económica y tus capacidades tecnológicas.',
+      },
       name: 'ingresos_tecnologia',
+      layout: '1-col',
       elements: [
         {
           type: 'radiogroup',
@@ -457,7 +497,14 @@ export const characterizationFormJson = {
       ],
     },
     {
+      banner: {
+        emoji: '🎯',
+        title: 'Intereses en Servicios de  Aprendizaje',
+        description:
+          'Ahora queremos conocer cuál es tu interés principal. Esta selección definirá tu ruta de acompañamiento personalizada.',
+      },
       name: 'aspiracion',
+      layout: '1-col',
       elements: [
         {
           type: 'radiogroup',
@@ -484,122 +531,164 @@ export const characterizationFormJson = {
       ],
     },
     {
-      "name": "ruta_emprendimiento",
-      "elements": [
+      showSteps: false,
+      banner: {
+        emoji: '🚀',
+        title: 'Ruta de Emprendimiento',
+        description:
+          'Queremos conocer más sobre tu emprendimiento o tu idea de negocio para brindarte el mejor acompañamiento.',
+      },
+      name: 'ruta_emprendimiento',
+      layout: '1-col',
+      elements: [
         {
-          "type": "radiogroup",
-          "name": "etapa_emprendimiento",
-          "title": "¿En qué etapa está tu emprendimiento?",
-          "isRequired": true,
-          "choices": [
-            { "value": "idea", "text": "💡 Tengo una idea, pero aún no he empezado" },
-            { "value": "iniciando", "text": "🌱 Estoy iniciando (menos de 1 año)" },
-            { "value": "funcionando", "text": "📈 Mi negocio ya está funcionando (más de 1 año)" },
-            { "value": "consolidado", "text": "🏢 Mi negocio está consolidado y busco crecer" }
-          ]
+          type: 'radiogroup',
+          name: 'etapa_emprendimiento',
+          title: '¿En qué etapa está tu emprendimiento?',
+          isRequired: true,
+          choices: [
+            {
+              value: 'idea',
+              text: '💡 Tengo una idea, pero aún no he empezado',
+            },
+            { value: 'iniciando', text: '🌱 Estoy iniciando (menos de 1 año)' },
+            {
+              value: 'funcionando',
+              text: '📈 Mi negocio ya está funcionando (más de 1 año)',
+            },
+            {
+              value: 'consolidado',
+              text: '🏢 Mi negocio está consolidado y busco crecer',
+            },
+          ],
         },
         {
-          "type": "dropdown",
-          "name": "tiempo_negocio",
-          "title": "¿Hace cuánto tiempo tienes tu negocio o idea?",
-          "isRequired": true,
-          "choices": [
-            { "value": "menos_6_meses", "text": "Menos de 6 meses" },
-            { "value": "6_12_meses", "text": "Entre 6 meses y 1 año" },
-            { "value": "1_3_anos", "text": "Entre 1 y 3 años" },
-            { "value": "3_5_anos", "text": "Entre 3 y 5 años" },
-            { "value": "mas_5_anos", "text": "Más de 5 años" }
-          ]
+          type: 'dropdown',
+          name: 'tiempo_negocio',
+          title: '¿Hace cuánto tiempo tienes tu negocio o idea?',
+          isRequired: true,
+          choices: [
+            { value: 'menos_6_meses', text: 'Menos de 6 meses' },
+            { value: '6_12_meses', text: 'Entre 6 meses y 1 año' },
+            { value: '1_3_anos', text: 'Entre 1 y 3 años' },
+            { value: '3_5_anos', text: 'Entre 3 y 5 años' },
+            { value: 'mas_5_anos', text: 'Más de 5 años' },
+          ],
         },
         {
-          "type": "dropdown",
-          "name": "sector_negocio",
-          "title": "¿A qué sector pertenece tu negocio o idea?",
-          "isRequired": true,
-          "choices": [
-            "Comercio",
-            "Servicios",
-            "Tecnología",
-            "Alimentos",
-            "Textil / Moda",
-            "Educación",
-            "Salud y bienestar",
-            "Construcción",
-            "Transporte",
-            "Turismo",
-            "Otro"
-          ]
+          type: 'dropdown',
+          name: 'sector_negocio',
+          title: '¿A qué sector pertenece tu negocio o idea?',
+          isRequired: true,
+          choices: [
+            'Comercio',
+            'Servicios',
+            'Tecnología',
+            'Alimentos',
+            'Textil / Moda',
+            'Educación',
+            'Salud y bienestar',
+            'Construcción',
+            'Transporte',
+            'Turismo',
+            'Otro',
+          ],
         },
         {
-          "type": "comment",
-          "name": "descripcion_negocio",
-          "title": "Describe brevemente tu negocio o idea de negocio",
-          "placeholder": "Ejemplo: Vendo productos de belleza natural, quiero abrir una tienda online de ropa..."
+          type: 'comment',
+          name: 'descripcion_negocio',
+          title: 'Describe brevemente tu negocio o idea de negocio',
+          placeholder:
+            'Ejemplo: Vendo productos de belleza natural, quiero abrir una tienda online de ropa...',
         },
         {
-          "type": "radiogroup",
-          "name": "formalizacion",
-          "title": "¿Tu negocio está formalizado (RUT, registro mercantil)?",
-          "isRequired": true,
-          "choices": [
-            { "value": "formalizado", "text": "✅ Sí, está formalizado" },
-            { "value": "proceso", "text": "⏳ Estoy en proceso de formalización" },
-            { "value": "informal", "text": "❌ No, es informal" },
-            { "value": "no_sabe", "text": "❓ No sé qué significa formalizar" }
-          ]
+          type: 'radiogroup',
+          name: 'formalizacion',
+          title: '¿Tu negocio está formalizado (RUT, registro mercantil)?',
+          isRequired: true,
+          choices: [
+            { value: 'formalizado', text: '✅ Sí, está formalizado' },
+            { value: 'proceso', text: '⏳ Estoy en proceso de formalización' },
+            { value: 'informal', text: '❌ No, es informal' },
+            { value: 'no_sabe', text: '❓ No sé qué significa formalizar' },
+          ],
         },
         {
-          "type": "text",
-          "name": "personas_trabajan",
-          "inputType": "number",
-          "title": "¿Cuántas personas trabajan en tu negocio (incluido tú)?",
-          "isRequired": true,
-          "min": 0
+          type: 'text',
+          name: 'personas_trabajan',
+          inputType: 'number',
+          title: '¿Cuántas personas trabajan en tu negocio (incluido tú)?',
+          isRequired: true,
+          min: 0,
         },
         {
-          "type": "checkbox",
-          "name": "tipo_apoyo",
-          "title": "¿Qué tipo de apoyo necesitas para tu emprendimiento? (puedes seleccionar varios)",
-          "isRequired": true,
-          "choices": [
-            { "value": "capacitacion", "text": "📚 Capacitación y formación empresarial" },
-            { "value": "financiacion", "text": "💰 Financiamiento o capital" },
-            { "value": "asesoria", "text": "🤝 Asesoría técnica o mentoría" },
-            { "value": "formalizacion", "text": "📄 Apoyo en formalización" },
-            { "value": "marketing", "text": "📢 Estrategias de marketing y ventas" },
-            { "value": "herramientas", "text": "🛠️ Herramientas tecnológicas" },
-            { "value": "redes_contacto", "text": "🔗 Redes de contacto y alianzas" }
-          ]
+          type: 'checkbox',
+          name: 'tipo_apoyo',
+          title:
+            '¿Qué tipo de apoyo necesitas para tu emprendimiento? (puedes seleccionar varios)',
+          isRequired: true,
+          choices: [
+            {
+              value: 'capacitacion',
+              text: '📚 Capacitación y formación empresarial',
+            },
+            { value: 'financiacion', text: '💰 Financiamiento o capital' },
+            { value: 'asesoria', text: '🤝 Asesoría técnica o mentoría' },
+            { value: 'formalizacion', text: '📄 Apoyo en formalización' },
+            {
+              value: 'marketing',
+              text: '📢 Estrategias de marketing y ventas',
+            },
+            { value: 'herramientas', text: '🛠️ Herramientas tecnológicas' },
+            {
+              value: 'redes_contacto',
+              text: '🔗 Redes de contacto y alianzas',
+            },
+          ],
         },
         {
-          "type": "checkbox",
-          "name": "temas_capacitacion",
-          "title": "¿En qué temas te gustaría capacitarte? (puedes seleccionar varios)",
-          "isRequired": true,
-          "choices": [
-            { "value": "plan_negocios", "text": "📊 Plan de negocios" },
-            { "value": "finanzas", "text": "💵 Finanzas y contabilidad" },
-            { "value": "marketing_digital", "text": "📱 Marketing digital y redes sociales" },
-            { "value": "ventas", "text": "💼 Técnicas de ventas" },
-            { "value": "servicio_cliente", "text": "😊 Servicio al cliente" },
-            { "value": "productividad", "text": "⏱️ Productividad y gestión del tiempo" },
-            { "value": "innovacion", "text": "💡 Innovación y desarrollo de productos" }
-          ]
+          type: 'checkbox',
+          name: 'temas_capacitacion',
+          title:
+            '¿En qué temas te gustaría capacitarte? (puedes seleccionar varios)',
+          isRequired: true,
+          choices: [
+            { value: 'plan_negocios', text: '📊 Plan de negocios' },
+            { value: 'finanzas', text: '💵 Finanzas y contabilidad' },
+            {
+              value: 'marketing_digital',
+              text: '📱 Marketing digital y redes sociales',
+            },
+            { value: 'ventas', text: '💼 Técnicas de ventas' },
+            { value: 'servicio_cliente', text: '😊 Servicio al cliente' },
+            {
+              value: 'productividad',
+              text: '⏱️ Productividad y gestión del tiempo',
+            },
+            {
+              value: 'innovacion',
+              text: '💡 Innovación y desarrollo de productos',
+            },
+          ],
         },
         {
-          "type": "radiogroup",
-          "name": "financiamiento_interes",
-          "title": "¿Te interesaría acceder a financiamiento o créditos para tu negocio?",
-          "isRequired": true,
-          "choices": [
-            { "value": "urgente", "text": "🆘 Sí, lo necesito urgentemente" },
-            { "value": "futuro", "text": "📅 Sí, en un futuro cercano" },
-            { "value": "no", "text": "❌ No en este momento" },
-            { "value": "mas_informacion", "text": "ℹ️ Me gustaría tener más información primero" }
-          ]
-        }
-      ]
-    }
+          type: 'radiogroup',
+          name: 'financiamiento_interes',
+          title:
+            '¿Te interesaría acceder a financiamiento o créditos para tu negocio?',
+          isRequired: true,
+          choices: [
+            { value: 'urgente', text: '🆘 Sí, lo necesito urgentemente' },
+            { value: 'futuro', text: '📅 Sí, en un futuro cercano' },
+            { value: 'no', text: '❌ No en este momento' },
+            {
+              value: 'mas_informacion',
+              text: 'ℹ️ Me gustaría tener más información primero',
+            },
+          ],
+        },
+      ],
+    },
   ],
 };
 

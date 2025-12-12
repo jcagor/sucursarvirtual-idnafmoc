@@ -63,87 +63,130 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
       router.replace('/characterization/success');
     });
 
-    return m;
-  }, [json, router]);
+    m.css = {
+      root: 'w-full',
 
-  survey.css = {
-    root: 'w-full',
+      page: 'dynamic-page-layout',
 
-    page: ![
-      'identificacion_perfil_usuario',
-      'condition_prioritization_vulnerability',
-      'entorno_familiar_comunitario',
-      'ingresos_tecnologia',
-      'aspiracion',
-      'ruta_emprendimiento',
-    ].includes(survey.currentPage.name)
-      ? 'w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 p-2'
-      : 'grid grid-cols-1 p-2',
+      row: 'w-full !flex !flex-col !gap-0',
+      rowMultiple: 'w-full !flex !flex-col',
 
-    row: 'w-full !flex !flex-col !gap-0',
-    rowMultiple: 'w-full !flex !flex-col',
+      element: 'w-full',
 
-    element: 'w-full',
+      question: {
+        mainRoot: 'w-full flex flex-col',
+        content: 'w-full',
+        title: 'text-sm font-semibold text-gray-700 mb-2',
+      },
 
-    question: {
-      mainRoot: 'w-full flex flex-col',
-      content: 'w-full',
-      title: 'text-sm font-semibold text-gray-700 mb-2',
-    },
+      text: {
+        root:
+          'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
+          'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
+      },
 
-    text: {
-      root:
-        'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
-        'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
-    },
+      comment: {
+        root:
+          'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
+          'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
+      },
 
-    comment: {
-      root:
-        'w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 placeholder-gray-400 ' +
-        'focus:outline-none focus:ring-2 focus:ring-[#003DA5]',
-    },
+      dropdown: {
+        control:
+          'w-full rounded-xl border border-gray-300 px-4 py-1 bg-white text-gray-800 appearance-none ' +
+          'focus:outline-none focus:ring-2 focus:ring-[#003DA5] flex justify-between',
+        popup: 'bg-white border border-gray-200 rounded-xl shadow-lg',
+      },
 
-    dropdown: {
-      control:
-        'w-full rounded-xl border border-gray-300 px-4 py-1 bg-white text-gray-800 appearance-none ' +
-        'focus:outline-none focus:ring-2 focus:ring-[#003DA5] flex justify-between',
-      popup: 'bg-white border border-gray-200 rounded-xl shadow-lg',
-    },
+      selectbase: {
+        item: 'px-4 py-3 cursor-pointer hover:bg-gray-100 text-gray-700',
 
-    selectbase: {
-      item: 'px-4 py-3 cursor-pointer hover:bg-gray-100 text-gray-700',
+        itemSelected:
+          'px-4 py-3 cursor-pointer bg-[#003DA5] text-white font-semibold',
 
-      itemSelected:
-        'px-4 py-3 cursor-pointer bg-[#003DA5] text-white font-semibold',
+        itemHovered: 'px-4 py-3 cursor-pointer bg-gray-100 text-gray-700',
+      },
 
-      itemHovered: 'px-4 py-3 cursor-pointer bg-gray-100 text-gray-700',
-    },
+      body: {
+        root: 'max-w-full',
+      },
 
-    body: {
-      root: 'max-w-full',
-    },
+      radiogroup: {
+        root: 'w-full flex flex-col gap-3',
+        item: 'w-full block rounded-xl bg-[#F4F4F5] px-4 py-4 cursor-pointer text-gray-800 hover:bg-[#E6E6E7] transition font-medium',
+        label: 'w-full flex items-center gap-4',
+      },
 
-    radiogroup: {
-      root: 'w-full flex flex-col gap-3',
-      item: 'w-full block rounded-xl bg-[#F4F4F5] px-4 py-4 cursor-pointer text-gray-800 hover:bg-[#E6E6E7] transition font-medium',
-      label: 'w-full flex items-center gap-4',
-    },
+      checkbox: {
+        root: 'w-full flex flex-col gap-3',
 
-    checkbox: {
-      root: 'w-full flex flex-col gap-3',
-
-      item: `
+        item: `
     w-full block rounded-xl bg-[#F4F4F5]
     px-4 py-4 cursor-pointer text-gray-800
     hover:bg-[#E6E6E7] transition font-medium
   `,
 
-      label: 'w-full flex items-center gap-4',
-    },
-  };
+        label: 'w-full flex items-center gap-4',
+      },
+    };
+
+    m.onAfterRenderPage.add((survey, options) => {
+      const page = options.page;
+      const el = options.htmlElement;
+      console.log('page rendered', page, el);
+      if (!el) return;
+
+      // clean grid classes
+      el.classList.remove(
+        ...Array.from(el.classList).filter((c) => c.startsWith('grid'))
+      );
+
+      const layout = (page as any)?.jsonObj?.layout ?? '2-cols';
+
+      if (layout === '1-col') {
+        el.classList.add('grid', 'grid-cols-1', 'gap-6');
+      } else {
+        el.classList.add('grid', 'grid-cols-1', 'md:grid-cols-2', 'gap-6');
+      }
+    });
+
+    m.onAfterRenderQuestion.add((survey, options) => {
+      const q = options.question;
+      const el = options.htmlElement;
+      if (!el) return;
+
+      // clean col-span classes
+      el.classList.remove(
+        ...Array.from(el.classList).filter((c) => c.startsWith('col-span'))
+      );
+
+      const width = q.json?.width ?? 'normal';
+
+      if (width === 'full') {
+        el.classList.add('col-span-1', 'md:col-span-2');
+      } else {
+        el.classList.add('col-span-1');
+      }
+    });
+
+    return m;
+  }, [json, router]);
+
+  const showSteps =
+    (survey as any).jsonObj.pages?.[activeStep]?.showSteps ?? true;
 
   useEffect(() => {
     setActiveStep(survey.currentPageNo);
+
+    const handlePageChange = (sender: any) => {
+      setActiveStep(sender.currentPageNo);
+    };
+
+    survey.onCurrentPageChanged.add(handlePageChange);
+
+    return () => {
+      survey.onCurrentPageChanged.remove(handlePageChange);
+    };
   }, [survey]);
 
   return (
@@ -160,13 +203,13 @@ export const CharacterizationFormTemplate = ({ json }: any) => {
         </p>
       </div>
 
-      {CharacterizationSteps.RutaEmprendimiento !== activeStep && (
+      {showSteps && (
         <div className='w-full mb-8 overflow-x-auto lg:overflow-x-visible no-scrollbar'>
           <ProgressSteps steps={steps} activeStep={activeStep} />
         </div>
       )}
       <CharacterizationForm
-        surveyComponent={<CharacterizationSurvey model={survey} />}
+        surveyComponent={<CharacterizationSurvey key={activeStep} model={survey} />}
         survey={survey}
       />
     </div>
